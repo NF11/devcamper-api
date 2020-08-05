@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const slugify = require("slugify");
+const geoCoder = require("../utils/geoCoder");
 
 const BootcampSchema = new mongoose.Schema({
   name: {
@@ -102,6 +104,28 @@ const BootcampSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+});
+//slugify name
+BootcampSchema.pre("save", function (next) {
+  this.slug = slugify(this.name, { lower: true });
+  next();
+});
+
+// covert address to coordinate
+BootcampSchema.pre("save", async function (next) {
+  const location = await geoCoder.geocode(this.address);
+  this.location = {
+    type: "Point",
+    coordinates: [location[0].longitude, location[0].latitude],
+    formattedAddress: location[0].formattedAddress,
+    street: location[0].streetName,
+    city: location[0].city,
+    state: location[0].stateCode,
+    zipcode: location[0].zipcode,
+    country: location[0].countryCode,
+  };
+  this.address = undefined;
+  next();
 });
 
 module.exports = mongoose.model("Bootcamp", BootcampSchema);
