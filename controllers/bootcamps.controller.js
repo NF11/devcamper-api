@@ -1,5 +1,5 @@
 const Bootcamp = require("../models/Bootcamp.schema");
-
+const errorResponse = require("../utils/errorResponse");
 // @desc get all bootcamps
 // @route GET /api/v1/bootcamps
 // @access Public
@@ -8,7 +8,7 @@ exports.getBootcamps = async (req, res, next) => {
     const result = await Bootcamp.find();
     res.status(200).send({ success: true, count: result.length, data: result });
   } catch (e) {
-    res.status(400).send({ success: false, messages: e.message });
+    next(e);
   }
 };
 
@@ -18,10 +18,11 @@ exports.getBootcamps = async (req, res, next) => {
 exports.getBootcamp = async (req, res, next) => {
   try {
     const result = await Bootcamp.findById(req.params.id);
-    if (!result) return res.status(400).send({ success: false, messages: 0 });
+    if (!result)
+      return next(new errorResponse(`not found with id ${req.params.id}`, 404));
     res.status(200).send({ success: true, data: result });
   } catch (e) {
-    res.status(400).send({ success: false, messages: e.message });
+    next(e);
   }
 };
 
@@ -34,7 +35,7 @@ exports.createBootcamp = async (req, res, next) => {
     const result = await Bootcamp.create(req.body);
     res.status(201).send({ success: true, data: result });
   } catch (e) {
-    res.status(400).send({ success: false, messages: e.message });
+    next(e);
   }
 };
 
@@ -47,10 +48,11 @@ exports.updateBootcamp = async (req, res, next) => {
       new: true,
       runValidators: true,
     });
-    if (!result) return res.status(400).send({ success: false, messages: 0 });
+    if (!result)
+      return next(new errorResponse(`not found with id ${req.params.id}`, 404));
     res.status(200).send({ success: true, data: result });
   } catch (e) {
-    res.status(400).send({ success: false, messages: e.message });
+    next(e);
   }
 };
 
@@ -60,9 +62,10 @@ exports.updateBootcamp = async (req, res, next) => {
 exports.deleteBootcamp = async (req, res, next) => {
   try {
     const result = await Bootcamp.findByIdAndDelete(req.params.id);
-    if (!result) return res.status(400).send({ success: false, messages: 0 });
+    if (!result)
+      return next(new errorResponse(`not found with id ${req.params.id}`, 404));
     res.status(200).send({ success: true, data: result });
   } catch (e) {
-    res.status(400).send({ success: false, messages: e.message });
+    next(e);
   }
 };
