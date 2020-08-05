@@ -14,6 +14,8 @@ const bootcamps = require("./routes/bootcamps.routes");
 
 const app = express();
 
+//JSON Parser
+app.use(express.json());
 //mount dev middleware
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
