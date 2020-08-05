@@ -17,22 +17,25 @@ const BootcampSchema = new mongoose.Schema({
   },
   website: {
     type: String,
-    validate: {
-      validate: (value) =>
-        validator.isURL(value, { protocols: ["http", "https"] }),
-      message: (props) => `${props.value} is not valid url for website`,
-    },
+    validate: [
+      (value) => validator.isURL(value, { protocols: ["http", "https"] }),
+      (props) => `${props.value} is not valid url for website`,
+    ],
   },
   phone: {
     type: String,
+    validate: [
+      (value) => validator.isMobilePhone(value),
+      (props) => `${props.value} is not valid phone number`,
+    ],
     maxLength: 20,
   },
   email: {
     type: String,
-    validate: {
-      validate: (value) => validator.isEmail(value),
-      message: (props) => `${props.value} is not valid email`,
-    },
+    validate: [
+      (value) => validator.isEmail(value),
+      (props) => `${props.value} is not valid email`,
+    ],
   },
   address: {
     type: String,
@@ -43,11 +46,11 @@ const BootcampSchema = new mongoose.Schema({
     type: {
       type: String,
       enum: ["point"],
-      required: true,
+      // required: true,
     },
     coordinates: {
       type: [Number],
-      required: true,
+      // required: true,
       index: "2dsphere",
     },
     formattedAddress: String,
@@ -61,7 +64,7 @@ const BootcampSchema = new mongoose.Schema({
     type: [String],
     required: true,
     enum: [
-      "web Development",
+      "Web Development",
       "Mobile Development",
       "UI/UX",
       "Data Science",
@@ -101,4 +104,4 @@ const BootcampSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.Model("Bootcamp", BootcampSchema);
+module.exports = mongoose.model("Bootcamp", BootcampSchema);
