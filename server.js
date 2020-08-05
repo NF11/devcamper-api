@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 const morgan = require("morgan");
 const colors = require("colors");
 
-const errorHandler = require("./middleware/error.midellware");
+const errorHandler = require("./middleware/error.middleware");
 const connectDB = require("./config/db.config");
 
 // load config

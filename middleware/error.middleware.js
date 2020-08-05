@@ -2,10 +2,11 @@ const ErrorResponse = require("../utils/errorResponse");
 
 const errorHandler = (err, req, res, next) => {
   let error = { ...err };
-  console.log(err);
+  error.message = err.message;
+  console.log(err.stack.red);
   //Mongoose bad ObjectID
   if (err.name === "CastError") {
-    const message = `fdfdf not found with id of ${err.value}`;
+    const message = `fdfdf incorrect format id for ${err.value}`;
     error = new ErrorResponse(message, 404);
   }
   //Mongoose duplicate key
