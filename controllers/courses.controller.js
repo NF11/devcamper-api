@@ -16,7 +16,10 @@ exports.getCourses = asyncHandler(async (req, res, next) => {
       data: courses,
     });
   } else {
-    const courses = await Course.find();
+    const courses = await Course.find().populate({
+      path: "bootcamp",
+      // select: "name description",
+    });
     res.status(200).send({
       success: true,
       count: courses.length,
