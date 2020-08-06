@@ -13,14 +13,20 @@ mongoose.connect(process.env.MONGO_URL, {
 });
 
 const Bootcamp = require("./models/Bootcamp.schema");
+const Course = require("./models/Course.schema");
 
 const bootcamps = JSON.parse(
   fs.readFileSync(`${__dirname}/_data/bootcamps.json`, "utf-8")
 );
 
+const Courses = JSON.parse(
+  fs.readFileSync(`${__dirname}/_data/courses.json`, "utf-8")
+);
+
 const importData = async () => {
   try {
     await Bootcamp.create(bootcamps);
+    await Course.create(Courses);
     console.log("Data Imported...".green.inverse);
     process.exit();
   } catch (e) {
@@ -31,6 +37,7 @@ const importData = async () => {
 const deleteData = async () => {
   try {
     await Bootcamp.deleteMany();
+    await Course.deleteMany();
     console.log("DATA DELETED ...".green.inverse);
     process.exit();
   } catch (e) {
