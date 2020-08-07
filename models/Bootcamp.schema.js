@@ -80,7 +80,9 @@ const BootcampSchema = new mongoose.Schema(
       min: 1,
       max: 10,
     },
-    averageCost: Number,
+    averageCost: {
+      type: Number,
+    },
     photo: {
       type: String,
       default: "no-photo.jpg",
