@@ -6,10 +6,21 @@ const {
   updateCourse,
   deleteCourse,
 } = require("../controllers/courses.controller");
+const Course = require("../models/Course.schema");
+const customResults = require("../middleware/customResults.middleware");
 
 const router = express.Router({ mergeParams: true });
 
-router.route("/").get(getCourses).post(createCourse);
+router
+  .route("/")
+  .get(
+    customResults(Course, {
+      path: "bootcamp",
+      // select: "name description",
+    }),
+    getCourses
+  )
+  .post(createCourse);
 router.route("/:id").get(getCourse).put(updateCourse).delete(deleteCourse);
 
 module.exports = router;

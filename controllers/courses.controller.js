@@ -17,15 +17,7 @@ exports.getCourses = asyncHandler(async (req, res, next) => {
       data: result,
     });
   } else {
-    const result = await Course.find().populate({
-      path: "bootcamp",
-      // select: "name description",
-    });
-    res.status(200).send({
-      success: true,
-      count: result.length,
-      data: result,
-    });
+    res.status(200).send(res.customResults);
   }
 });
 
