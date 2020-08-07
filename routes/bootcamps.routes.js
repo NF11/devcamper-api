@@ -11,6 +11,7 @@ const {
 
 const Bootcamp = require("../models/Bootcamp.schema");
 const customResults = require("../middleware/customResults.middleware");
+const uploadePhotoValidator = require("../middleware/uploadePhotoValidator.middleware");
 // Include other resource router
 const courseRouter = require("./courses.routes");
 
@@ -32,6 +33,8 @@ router
   .put(updateBootcamp)
   .delete(deleteBootcamp);
 
-router.route("/:id/photo").put(uploadBootcampPhoto);
+router
+  .route("/:id/photo")
+  .put(uploadePhotoValidator(Bootcamp), uploadBootcampPhoto);
 
 module.exports = router;

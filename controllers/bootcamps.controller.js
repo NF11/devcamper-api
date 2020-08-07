@@ -1,6 +1,5 @@
-const path = require("path");
 const Bootcamp = require("../models/Bootcamp.schema");
-const errorResponse = require("../utils/errorResponse");
+const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require("../middleware/asyncHandler.middleware");
 const geoCoder = require("../utils/geoCoder");
 
@@ -17,7 +16,7 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
 exports.getBootcamp = asyncHandler(async (req, res, next) => {
   const result = await Bootcamp.findById(req.params.id);
   if (!result)
-    return next(new errorResponse(`not found with id ${req.params.id}`, 404));
+    return next(new ErrorResponse(`not found with id ${req.params.id}`, 404));
   res.status(200).send({ success: true, data: result });
 });
 
@@ -39,7 +38,7 @@ exports.updateBootcamp = asyncHandler(async (req, res, next) => {
     runValidators: true,
   });
   if (!result)
-    return next(new errorResponse(`not found with id ${req.params.id}`, 404));
+    return next(new ErrorResponse(`not found with id ${req.params.id}`, 404));
   res.status(200).send({ success: true, data: result });
 });
 
@@ -49,7 +48,7 @@ exports.updateBootcamp = asyncHandler(async (req, res, next) => {
 exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
   const result = await Bootcamp.findById(req.params.id);
   if (!result)
-    return next(new errorResponse(`not found with id ${req.params.id}`, 404));
+    return next(new ErrorResponse(`not found with id ${req.params.id}`, 404));
   result.remove();
   res.status(200).send({ success: true, data: result });
 });
@@ -58,43 +57,13 @@ exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
 // @route PUT /api/v1/bootcamps/:id/photo
 // @access Private
 exports.uploadBootcampPhoto = asyncHandler(async (req, res, next) => {
-  const result = await Bootcamp.findById(req.params.id);
-  // validation
-  if (!result)
-    return next(new errorResponse(`not found with id ${req.params.id}`, 404));
-
-  if (!req.files) return next(new errorResponse(`not file found`, 400));
-
-  const uploadedFile = req.files.file;
-
-  if (!uploadedFile.mimetype.startsWith("image"))
-    return next(new errorResponse(`not image type`, 400));
-
-  if (!uploadedFile.size > process.env.MAX_UPLOAD_SIZE)
-    return next(
-      new errorResponse(
-        `please upload an image less then ${process.env.MAX_UPLOAD_SIZE}`,
-        400
-      )
-    );
-  // create custom file name
-  uploadedFile.name = `photo_${result._id}${path.parse(uploadedFile.name).ext}`;
-  await uploadedFile.mv(
-    `${process.env.FILE_UPLOAD_PATH}/${uploadedFile.name}`,
-    async (e) => {
-      if (e) {
-        console.log(e);
-        return next(new errorResponse(`Problem with file upload`, 500));
-      }
-      await Bootcamp.findByIdAndUpdate(req.params.id, {
-        photo: uploadedFile.name,
-      });
-      res.status(200).send({
-        success: true,
-        data: uploadedFile.name,
-      });
-    }
-  );
+  await Bootcamp.findByIdAndUpdate(req.params.id, {
+    photo: res.uploadPhotoName,
+  });
+  res.status(200).send({
+    success: true,
+    data: res.uploadPhotoName,
+  });
 });
 
 // @desc Get bootcamps within a radius

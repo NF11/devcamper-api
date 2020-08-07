@@ -24,7 +24,7 @@ app.use(express.json());
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
-app.use(fileUpload());
+app.use(fileUpload({ createParentPath: true }));
 
 //mount router
 app.use("/api/v1/bootcamps", bootcamps);
