@@ -63,3 +63,33 @@ exports.createCourse = asyncHandler(async (req, res, next) => {
   const result = await Course.create(req.body);
   res.status(201).send({ success: true, data: result });
 });
+
+// @desc Update Course
+// @route PUT /api/v1/courses/:id
+// @access Private
+exports.updateCourse = asyncHandler(async (req, res, next) => {
+  const result = await Course.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  if (!result)
+    return next(
+      new errorResponse("No course with id of " + req.params.id),
+      404
+    );
+  res.status(201).send({ success: true, data: result });
+});
+
+// @desc Delete Course
+// @route DELETE /api/v1/courses/:id
+// @access Private
+exports.deleteCourse = asyncHandler(async (req, res, next) => {
+  const result = await Course.findById(req.params.id);
+  if (!result)
+    return next(
+      new errorResponse("No course with id of " + req.params.id),
+      404
+    );
+  result.remove();
+  res.status(201).send({ success: true, data: result });
+});
