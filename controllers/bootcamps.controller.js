@@ -24,6 +24,20 @@ exports.getBootcamp = asyncHandler(async (req, res, next) => {
 // @route POST /api/v1/bootcamps
 // @access Private
 exports.createBootcamp = asyncHandler(async (req, res, next) => {
+  //add user to req body
+  req.body.user = req.user;
+  // Check for publisher bootcamp
+  const publisherBootcamp = await Bootcamp.findOne({ user: req.body.user });
+
+  //if the user is not an admin , they can only add one bootcamp
+  if (publisherBootcamp && req.body.user.role !== "admin")
+    return next(
+      new ErrorResponse(
+        `The user with ID ${req.user.id} has already published a bootcamp`,
+        401
+      )
+    );
+
   const result = await Bootcamp.create(req.body);
   res.status(201).send({ success: true, data: result });
 });
@@ -36,8 +50,6 @@ exports.updateBootcamp = asyncHandler(async (req, res, next) => {
     new: true,
     runValidators: true,
   });
-  if (!result)
-    return next(new ErrorResponse(`not found with id ${req.params.id}`, 404));
   res.status(200).send({ success: true, data: result });
 });
 
@@ -46,8 +58,6 @@ exports.updateBootcamp = asyncHandler(async (req, res, next) => {
 // @access Private
 exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
   const result = await Bootcamp.findById(req.params.id);
-  if (!result)
-    return next(new ErrorResponse(`not found with id ${req.params.id}`, 404));
   result.remove();
   res.status(200).send({ success: true, data: result });
 });

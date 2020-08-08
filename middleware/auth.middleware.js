@@ -18,6 +18,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse("Not authorize to access this route", 401));
   try {
     const decode = jwt.verify(token, process.env.JWT_SECRET);
+    // affect new attr to req with user info
     req.user = await User.findById(decode.id);
     next();
   } catch (e) {
@@ -35,5 +36,25 @@ exports.authorize = (...roles) => (req, res, next) => {
       )
     );
   }
+  next();
+};
+
+// @desc Grant access to specific roles to do action
+exports.checkOwner = (Model) => async (req, res, next) => {
+  let result = await Model.findById(req.params.id);
+  if (!result)
+    return next(new ErrorResponse(`not found with id ${req.params.id}`, 404));
+
+  // Make sure user is the owner
+  if (
+    result.user.toString() !== req.user._id.toString() &&
+    req.user.role !== "admin"
+  )
+    return next(
+      new ErrorResponse(
+        `User ${req.params.id} is not authorized todo this action`,
+        401
+      )
+    );
   next();
 };

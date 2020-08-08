@@ -8,7 +8,11 @@ const {
   getBootcampsInRadius,
   uploadBootcampPhoto,
 } = require("../controllers/bootcamps.controller");
-const { protect, authorize } = require("../middleware/auth.middleware");
+const {
+  protect,
+  authorize,
+  checkOwner,
+} = require("../middleware/auth.middleware");
 const Bootcamp = require("../models/Bootcamp.schema");
 const customResults = require("../middleware/customResults.middleware");
 const uploadePhotoValidator = require("../middleware/uploadePhotoValidator.middleware");
@@ -25,20 +29,29 @@ router.route("/radius/:zipcode/:distance").get(getBootcampsInRadius);
 router
   .route("/")
   .get(customResults(Bootcamp, "courses"), getBootcamps)
-  .post(protect, authorize("publisher", "admin"), createBootcamp);
+  .post([protect, authorize("publisher", "admin")], createBootcamp);
 
 router
   .route("/:id")
   .get(getBootcamp)
-  .put(protect, authorize("publisher", "admin"), updateBootcamp)
-  .delete(protect, authorize("publisher", "admin"), deleteBootcamp);
+  .put(
+    [protect, authorize("publisher", "admin"), checkOwner(Bootcamp)],
+    updateBootcamp
+  )
+  .delete(
+    [protect, authorize("publisher", "admin"), checkOwner(Bootcamp)],
+    deleteBootcamp
+  );
 
 router
   .route("/:id/photo")
   .put(
-    protect,
-    authorize("publisher", "admin"),
-    [uploadePhotoValidator(Bootcamp)],
+    [
+      protect,
+      authorize("publisher", "admin"),
+      checkOwner(Bootcamp),
+      uploadePhotoValidator(Bootcamp),
+    ],
     uploadBootcampPhoto
   );
 
