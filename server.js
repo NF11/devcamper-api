@@ -13,6 +13,7 @@ dotenv.config({ path: "./config/config.env" });
 // Connect to DB
 connectDB();
 //route files
+const auth = require("./routes/auth.routes");
 const bootcamps = require("./routes/bootcamps.routes");
 const courses = require("./routes/courses.routes");
 
@@ -27,6 +28,7 @@ if (process.env.NODE_ENV === "development") {
 app.use(fileUpload({ createParentPath: true }));
 
 //mount router
+app.use("/api/v1/auth", auth);
 app.use("/api/v1/bootcamps", bootcamps);
 app.use("/api/v1/courses", courses);
 app.use(errorHandler);
