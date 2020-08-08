@@ -8,7 +8,7 @@ const {
   getBootcampsInRadius,
   uploadBootcampPhoto,
 } = require("../controllers/bootcamps.controller");
-
+const { protect } = require("../middleware/auth.middleware");
 const Bootcamp = require("../models/Bootcamp.schema");
 const customResults = require("../middleware/customResults.middleware");
 const uploadePhotoValidator = require("../middleware/uploadePhotoValidator.middleware");
@@ -25,16 +25,16 @@ router.route("/radius/:zipcode/:distance").get(getBootcampsInRadius);
 router
   .route("/")
   .get(customResults(Bootcamp, "courses"), getBootcamps)
-  .post(createBootcamp);
+  .post(protect, createBootcamp);
 
 router
   .route("/:id")
   .get(getBootcamp)
-  .put(updateBootcamp)
-  .delete(deleteBootcamp);
+  .put(protect, updateBootcamp)
+  .delete(protect, deleteBootcamp);
 
 router
   .route("/:id/photo")
-  .put(uploadePhotoValidator(Bootcamp), uploadBootcampPhoto);
+  .put(protect, [uploadePhotoValidator(Bootcamp)], uploadBootcampPhoto);
 
 module.exports = router;
