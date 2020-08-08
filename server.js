@@ -2,6 +2,7 @@ const path = require("path");
 const express = require("express");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
+const cookieParser = require("cookie-parser");
 const colors = require("colors");
 const fileUpload = require("express-fileupload");
 const errorHandler = require("./middleware/error.middleware");
@@ -26,6 +27,7 @@ if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 app.use(fileUpload({ createParentPath: true }));
+app.use(cookieParser());
 
 //mount router
 app.use("/api/v1/auth", auth);
