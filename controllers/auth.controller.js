@@ -14,3 +14,23 @@ exports.register = asyncHandler(async (req, res, next) => {
   const token = result.getSignedJwtToken();
   res.status(200).send({ success: true, token });
 });
+
+// @desc      Login user
+// @route     POST /api/v1/auth/login
+// @access    Public
+
+exports.login = asyncHandler(async (req, res, next) => {
+  const { email, password } = req.body;
+
+  if (!email || !password)
+    return next(new ErrorResponse("Please provided email and password", 400));
+
+  const result = await User.findOne({ email }).select("+password");
+  if (!result) return next(new ErrorResponse("Invalid credential", 400));
+  //check password
+  const isMatch = await result.matchPassword(password);
+  if (!isMatch) return next(new ErrorResponse("Invalid credential", 400));
+
+  const token = result.getSignedJwtToken();
+  res.status(200).send({ success: true, token });
+});
