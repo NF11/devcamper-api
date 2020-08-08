@@ -10,6 +10,7 @@ const User = require("../models/User.schema");
 
 exports.register = asyncHandler(async (req, res, next) => {
   const { name, email, password, role } = req.body;
-  const result = User.create({ name, email, password, role });
-  res.status(200).send({ success: true });
+  const result = await User.create({ name, email, password, role });
+  const token = result.getSignedJwtToken();
+  res.status(200).send({ success: true, token });
 });
