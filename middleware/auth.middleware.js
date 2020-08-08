@@ -3,7 +3,7 @@ const asyncHandler = require("./asyncHandler.middleware");
 const ErrorResponse = require("../utils/errorResponse");
 const User = require("../models/User.schema");
 
-// Protect route
+// @desc Protect route
 exports.protect = asyncHandler(async (req, res, next) => {
   let token;
   const headersAuth = req.headers.authorization;
@@ -18,10 +18,22 @@ exports.protect = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse("Not authorize to access this route", 401));
   try {
     const decode = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(decode);
     req.user = await User.findById(decode.id);
     next();
   } catch (e) {
     return next(new ErrorResponse("Not authorize to access this route", 401));
   }
 });
+
+// @desc Grant access to specific roles
+exports.authorize = (...roles) => (req, res, next) => {
+  if (!roles.includes(req.user.role)) {
+    return next(
+      new ErrorResponse(
+        `User role ${req.user.role} is not authorized to access this route`,
+        403
+      )
+    );
+  }
+  next();
+};

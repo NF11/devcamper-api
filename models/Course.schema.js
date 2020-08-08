@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+//@desc Course Model
 const CourseSchema = new mongoose.Schema(
   {
     title: {
@@ -38,6 +39,7 @@ const CourseSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+//@desc Aggregate for calculate avg of tuition related with specific bootcamp
 CourseSchema.statics.getAverageCost = async function (bootcampId) {
   const obj = await this.aggregate([
     {
@@ -60,11 +62,11 @@ CourseSchema.statics.getAverageCost = async function (bootcampId) {
   }
 };
 
-// Call getAverageCost after save
+// @desc Call getAverageCost after save
 CourseSchema.post("save", async function () {
   await this.constructor.getAverageCost(this.bootcamp);
 });
-// Call getAverageCost before remove
+// @desc Call getAverageCost before remove
 CourseSchema.pre("remove", function () {
   this.constructor.getAverageCost(this.bootcamp);
 });
