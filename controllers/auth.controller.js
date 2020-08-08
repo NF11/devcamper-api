@@ -7,7 +7,6 @@ const User = require("../models/User.schema");
 // @desc      Register user
 // @route     POST /api/v1/auth/register
 // @access    Public
-
 exports.register = asyncHandler(async (req, res, next) => {
   const { name, email, password, role } = req.body;
   const result = await User.create({ name, email, password, role });
@@ -17,7 +16,6 @@ exports.register = asyncHandler(async (req, res, next) => {
 // @desc      Login user
 // @route     POST /api/v1/auth/login
 // @access    Public
-
 exports.login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -32,10 +30,10 @@ exports.login = asyncHandler(async (req, res, next) => {
 
   sendTokenResponse(result, 200, res);
 });
+
 // @desc      Get current user logged
 // @route     GET /api/v1/auth/me
 // @access    Private
-
 exports.getMe = asyncHandler(async (req, res, next) => {
   const result = await User.findById(req.user);
   res.status(200).send({ success: true, data: result });

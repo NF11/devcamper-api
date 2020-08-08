@@ -1,6 +1,7 @@
 const path = require("path");
 const ErrorResponse = require("../utils/errorResponse");
 
+//@desc Setup and validation on uploaded photo
 const uploadPhotoValidator = (model) => async (req, res, next) => {
   const result = await model.findById(req.params.id);
   // validation

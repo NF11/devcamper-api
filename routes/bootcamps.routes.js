@@ -8,7 +8,7 @@ const {
   getBootcampsInRadius,
   uploadBootcampPhoto,
 } = require("../controllers/bootcamps.controller");
-const { protect } = require("../middleware/auth.middleware");
+const { protect, authorize } = require("../middleware/auth.middleware");
 const Bootcamp = require("../models/Bootcamp.schema");
 const customResults = require("../middleware/customResults.middleware");
 const uploadePhotoValidator = require("../middleware/uploadePhotoValidator.middleware");
@@ -17,7 +17,7 @@ const courseRouter = require("./courses.routes");
 
 const router = express.Router();
 
-// Re-route into other resource router
+// @desc Re-route into other resource router
 router.use("/:bootcampId/courses", courseRouter);
 
 router.route("/radius/:zipcode/:distance").get(getBootcampsInRadius);
@@ -25,16 +25,21 @@ router.route("/radius/:zipcode/:distance").get(getBootcampsInRadius);
 router
   .route("/")
   .get(customResults(Bootcamp, "courses"), getBootcamps)
-  .post(protect, createBootcamp);
+  .post(protect, authorize("publisher", "admin"), createBootcamp);
 
 router
   .route("/:id")
   .get(getBootcamp)
-  .put(protect, updateBootcamp)
-  .delete(protect, deleteBootcamp);
+  .put(protect, authorize("publisher", "admin"), updateBootcamp)
+  .delete(protect, authorize("publisher", "admin"), deleteBootcamp);
 
 router
   .route("/:id/photo")
-  .put(protect, [uploadePhotoValidator(Bootcamp)], uploadBootcampPhoto);
+  .put(
+    protect,
+    authorize("publisher", "admin"),
+    [uploadePhotoValidator(Bootcamp)],
+    uploadBootcampPhoto
+  );
 
 module.exports = router;

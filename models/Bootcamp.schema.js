@@ -3,6 +3,7 @@ const validator = require("validator");
 const slugify = require("slugify");
 const geoCoder = require("../utils/geoCoder");
 
+//@desc Bootcamp Model
 const BootcampSchema = new mongoose.Schema(
   {
     name: {
@@ -106,13 +107,13 @@ const BootcampSchema = new mongoose.Schema(
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
-//slugify name
+//@desc slugify name
 BootcampSchema.pre("save", function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
 
-// covert address to coordinate
+//@desc covert address to coordinate
 BootcampSchema.pre("save", async function (next) {
   const location = await geoCoder.geocode(this.address);
   this.location = {
@@ -129,13 +130,13 @@ BootcampSchema.pre("save", async function (next) {
   next();
 });
 
-// Cascade delete
+//@desc Cascade delete
 BootcampSchema.pre("remove", async function (next) {
   await this.model("Course").deleteMany({ bootcamp: this._id });
   next();
 });
 
-// Reverse populate with virtual
+//@desc Reverse populate with virtual
 BootcampSchema.virtual("courses", {
   ref: "Course",
   localField: "_id",

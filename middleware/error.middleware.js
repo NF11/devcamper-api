@@ -1,5 +1,5 @@
 const ErrorResponse = require("../utils/errorResponse");
-
+//@desc Catch and Throw all error in response
 const errorHandler = (err, req, res, next) => {
   let error = { ...err };
   error.message = err.message;
