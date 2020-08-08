@@ -14,7 +14,9 @@ mongoose.connect(process.env.MONGO_URL, {
 
 const Bootcamp = require("./models/Bootcamp.schema");
 const Course = require("./models/Course.schema");
+const User = require("./models/User.schema");
 
+// Read JSON file
 const bootcamps = JSON.parse(
   fs.readFileSync(`${__dirname}/_data/bootcamps.json`, "utf-8")
 );
@@ -23,11 +25,17 @@ const Courses = JSON.parse(
   fs.readFileSync(`${__dirname}/_data/courses.json`, "utf-8")
 );
 
+const users = JSON.parse(
+  fs.readFileSync(`${__dirname}/_data/users.json`, "utf-8")
+);
+
+// Import data to database
 const importData = async () => {
   try {
     console.log("loading ...".yellow.inverse);
     await Bootcamp.create(bootcamps);
     await Course.create(Courses);
+    await User.create(users);
     console.log("Data Imported...".green.inverse);
     process.exit();
   } catch (e) {
@@ -35,11 +43,13 @@ const importData = async () => {
   }
 };
 
+// Delete data from database
 const deleteData = async () => {
   try {
     console.log("loading ...".yellow.inverse);
     await Bootcamp.deleteMany();
     await Course.deleteMany();
+    await User.deleteMany();
     console.log("DATA DELETED ...".green.inverse);
     process.exit();
   } catch (e) {
