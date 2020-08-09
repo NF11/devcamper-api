@@ -52,7 +52,7 @@ exports.checkOwner = (Model) => async (req, res, next) => {
   )
     return next(
       new ErrorResponse(
-        `User ${req.params.id} is not authorized todo this action`,
+        `User ${req.params.id} is not the owner so is not authorized todo this action`,
         401
       )
     );

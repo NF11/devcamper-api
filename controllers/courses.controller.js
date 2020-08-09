@@ -45,6 +45,8 @@ exports.getCourse = asyncHandler(async (req, res, next) => {
 // @access Private
 exports.createCourse = asyncHandler(async (req, res, next) => {
   req.body.bootcamp = req.params.bootcampId;
+  //add user to req body
+  req.body.user = req.user;
   const bootcamp = await Bootcamp.findById(req.params.bootcampId);
   if (!bootcamp)
     return next(
@@ -63,11 +65,6 @@ exports.updateCourse = asyncHandler(async (req, res, next) => {
     new: true,
     runValidators: true,
   });
-  if (!result)
-    return next(
-      new errorResponse("No course with id of " + req.params.id),
-      404
-    );
   res.status(201).send({ success: true, data: result });
 });
 
@@ -76,11 +73,6 @@ exports.updateCourse = asyncHandler(async (req, res, next) => {
 // @access Private
 exports.deleteCourse = asyncHandler(async (req, res, next) => {
   const result = await Course.findById(req.params.id);
-  if (!result)
-    return next(
-      new errorResponse("No course with id of " + req.params.id),
-      404
-    );
   result.remove();
   res.status(201).send({ success: true, data: result });
 });
