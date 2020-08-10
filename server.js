@@ -16,6 +16,7 @@ connectDB();
 //route files
 const auth = require("./routes/auth.routes");
 const bootcamps = require("./routes/bootcamps.routes");
+const reviews = require("./routes/reviews.routes");
 const courses = require("./routes/courses.routes");
 const users = require("./routes/admin/user.admin.routes");
 
@@ -34,6 +35,7 @@ app.use(cookieParser());
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/bootcamps", bootcamps);
 app.use("/api/v1/courses", courses);
+app.use("/api/v1/reviews", reviews);
 app.use("/api/v1/admin/users", users);
 app.use(errorHandler);
 

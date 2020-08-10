@@ -18,11 +18,13 @@ const customResults = require("../middleware/customResults.middleware");
 const uploadePhotoValidator = require("../middleware/uploadePhotoValidator.middleware");
 // Include other resource router
 const courseRouter = require("./courses.routes");
+const reviewRouter = require("./reviews.routes");
 
 const router = express.Router();
 
 // @desc Re-route into other resource router
 router.use("/:bootcampId/courses", courseRouter);
+router.use("/:bootcampId/reviews", reviewRouter);
 
 router.route("/radius/:zipcode/:distance").get(getBootcampsInRadius);
 
