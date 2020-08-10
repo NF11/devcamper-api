@@ -110,7 +110,6 @@ dist
 .vscode-test
 .idea
 _data
-public
 
 # yarn v2
 .yarn/cache
